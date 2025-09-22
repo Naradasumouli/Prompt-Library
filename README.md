@@ -1,7 +1,7 @@
 # 📚 Prompt Library
 
 A simple, browser-based **Prompt Library** that loads prompts from a JSON file hosted on GitHub.  
-This project helps organize, view, and manage reusable AI prompts.
+This project helps organize, view, and manage reusable AI prompts in a clean web interface.
 
 ---
 
@@ -11,11 +11,17 @@ This project helps organize, view, and manage reusable AI prompts.
 - Export prompts as **JSON** or **CSV**
 - Import prompts from JSON, CSV, or Markdown
 - Detail view with Markdown rendering
+- Local storage fallback if JSON is unavailable
 
 ---
 
 ## 🌐 Live Preview
-👉 [View on GitHub Pages](https://github.com/Naradasumouli/Prompt-Library/blob/main/index.html)
+👉 [View on GitHub Pages](https://naradasumouli.github.io/Prompt-Library/)
+
+*(If the link shows only code, enable GitHub Pages in your repo settings:  
+**Settings → Pages → Source → `main` branch → `/ (root)` → Save**.  
+Your `index.html` will then render as a web page.)*
+
 ---
 
 ## 📂 Project Structure
