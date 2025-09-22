@@ -120,18 +120,20 @@
     try { localStorage.setItem("promptLibrary", JSON.stringify(DATASETS)); } catch{}
   }
 
-  async function loadData() {
-    try {
-      const res = await fetch("data.json", {cache:"no-cache"});
-      if (!res.ok) throw 0;
-      DATASETS = await res.json();
-    } catch {
-      const saved = localStorage.getItem("promptLibrary");
-      if (saved) {
-        try { DATASETS = JSON.parse(saved); } catch{}
-      }
+async function loadData() {
+  try {
+    const url = "https://naradasumouli.github.io/Prompt-Library/data.json";
+    const res = await fetch(url + "?t=" + Date.now(), {cache:"no-cache"});
+    if (!res.ok) throw 0;
+    DATASETS = await res.json();
+  } catch {
+    const saved = localStorage.getItem("promptLibrary");
+    if (saved) {
+      try { DATASETS = JSON.parse(saved); } catch{}
     }
   }
+}
+
 
   function dataset(){ return DATASETS[viewSel.value] || []; }
 
