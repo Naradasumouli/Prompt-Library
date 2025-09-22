@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Automation QA Copilot Prompt Library</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root { --brand:#1565c0; --brand-dark:#0d3b74; --bg:#f9f9fc; --ink:#24292e; --card:#ffffff; --line:#dedede; }
+    body { font-family:'Segoe UI', Tahoma, Arial, sans-serif; background:var(--bg); color:var(--ink); margin:24px; }
+    header { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; margin-bottom:16px; }
+    h1 { color:var(--brand); font-size:1.9rem; margin:0; }
+    .controls { display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; align-items:center; }
+    .btn { background:var(--brand); color:#fff; border:0; padding:6px 10px; border-radius:8px; font-weight:600; cursor:pointer; font-size:0.8rem; display:flex; gap:6px; align-items:center; }
+    .btn.secondary { background:#e3edfa; color:var(--brand); }
+    .btn:hover { background:var(--brand-dark); color:#fff; }
+    .btn.danger { background:#dc2626; color:#fff; }
+    .btn.danger:hover { background:#991b1b; }
+    #search { width:180px; padding:6px 10px; border:1px solid var(--line); border-radius:6px; font-size:0.8rem; }
+    table { width:100%; border-collapse:collapse; background:var(--card); box-shadow:0 2px 14px rgba(0,0,0,.07); }
+    th, td { border:1px solid var(--line); padding:6px 8px; font-size:.85rem; text-align:left; vertical-align:top; }
+    th { background:var(--brand); color:#fff; font-weight:600; }
+    tbody tr:hover { background:#eaf3fc; cursor:pointer; }
+    .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:200; overflow:auto; }
+    .modal { background:var(--card); border-radius:14px; max-width:800px; margin:5% auto; padding:20px; box-shadow:0 24px 48px rgba(0,0,0,.2); position:relative; max-height:90vh; overflow-y:auto; }
+    .modal-close { position:absolute; right:16px; top:10px; font-size:1.4rem; font-weight:800; color:var(--brand); cursor:pointer; }
+    .modal-title { font-size:1.1rem; font-weight:800; margin-bottom:12px; color:var(--brand); }
+    .modal-content { font-size:0.9rem; }
+    .modal-content a { color:var(--brand); text-decoration:underline; }
+    .form-group { margin-bottom:10px; }
+    .form-group label { display:block; font-weight:600; margin-bottom:4px; font-size:0.85rem; }
+    .form-group input, .form-group textarea { width:100%; padding:6px; border:1px solid var(--line); border-radius:6px; font-size:0.85rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Titan Test Automation Prompt Library</h1>
+    <div class="controls">
+      <input id="search" type="search" placeholder="Search …" />
+      <select id="view">
+        <option value="tcg">Test Case Generation</option>
+        <option value="dbg">Debugging</option>
+      </select>
+      <button class="btn secondary" id="importJsonBtn">📂 Import JSON</button>
+      <button class="btn secondary" id="importCsvBtn">📂 Import CSV</button>
+      <button class="btn secondary" id="importMdBtn">📂 Import MD</button>
+      <button class="btn secondary" id="exportJsonBtn">📄 Export JSON</button>
+      <button class="btn secondary" id="exportCsvBtn">📊 Export CSV</button>
+      <button class="btn" id="addRowBtn">➕ Add</button>
+    </div>
+  </header>
+
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Serial</th>
+          <th>Author</th>
+          <th>Functionality</th>
+          <th>Prompt</th>
+          <th>Context</th>
+          <th>Version</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Form Modal -->
+  <div class="modal-bg" id="formModalBg">
+    <div class="modal">
+      <button class="modal-close" id="formModalClose">&times;</button>
+      <h2 class="modal-title" id="formTitle">Add Row</h2>
+      <form id="rowForm">
+        <div class="form-group"><label>Serial</label><input id="fSerial" required /></div>
+        <div class="form-group"><label>Author</label><input id="fAuthor" /></div>
+        <div class="form-group"><label>Functionality</label><textarea id="fFunctionality"></textarea></div>
+        <div class="form-group"><label>Prompt (text, link, or MD)</label><textarea id="fPrompt"></textarea></div>
+        <div class="form-group"><label>Context</label><textarea id="fContext"></textarea></div>
+        <div class="form-group"><label>Version</label><input id="fVersion" /></div>
+        <button type="submit" class="btn">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-bg" id="detailModalBg">
+    <div class="modal">
+      <button class="modal-close" id="detailModalClose">&times;</button>
+      <h2 class="modal-title">Row Details</h2>
+      <div class="modal-content" id="detailContent"></div>
+    </div>
+  </div>
+
+  <script>
+  let DATASETS = { tcg: [], dbg: [] };
+  const tbody = document.getElementById('tbody');
+  const viewSel = document.getElementById('view');
+  const formModalBg = document.getElementById('formModalBg');
+  const formModalClose = document.getElementById('formModalClose');
+  const rowForm = document.getElementById('rowForm');
+  const formTitle = document.getElementById('formTitle');
+  let editingIndex = null;
+  const detailModalBg = document.getElementById('detailModalBg');
+  const detailModalClose = document.getElementById('detailModalClose');
+  const detailContent = document.getElementById('detailContent');
+
+  // Optional buttons (may be null)
+  const exportJsonBtn = document.getElementById('exportJsonBtn');
+  const exportCsvBtn  = document.getElementById('exportCsvBtn');
+  const importJsonBtn = document.getElementById('importJsonBtn');
+  const importCsvBtn  = document.getElementById('importCsvBtn');
+  const importMdBtn   = document.getElementById('importMdBtn');
+
+  const esc = s => String(s||'').replaceAll('<','&lt;');
+
+  // STORAGE: try data.json, else localStorage
+  async function saveData() {
+    try { localStorage.setItem("promptLibrary", JSON.stringify(DATASETS)); } catch{}
+  }
+
+  async function loadData() {
+    try {
+      const res = await fetch("data.json", {cache:"no-cache"});
+      if (!res.ok) throw 0;
+      DATASETS = await res.json();
+    } catch {
+      const saved = localStorage.getItem("promptLibrary");
+      if (saved) {
+        try { DATASETS = JSON.parse(saved); } catch{}
+      }
+    }
+  }
+
+  function dataset(){ return DATASETS[viewSel.value] || []; }
+
+  function renderPromptCell(p) {
+    if (!p) return "";
+    if (/^https?:\/\//.test(p)) {
+      return `<a href="${esc(p)}" target="_blank">🔗 Open link</a>`;
+    }
+    const short = p.slice(0,50);
+    return esc(short) + (p.length>50?"…":"");
+  }
+
+  function buildTable(rows) {
+    tbody.innerHTML = "";
+    rows.forEach((r,i)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${esc(r.serial)}</td>
+        <td>${esc(r.author)}</td>
+        <td>${esc((r.functionality||'').slice(0,50))}${(r.functionality||'').length>50?'…':''}</td>
+        <td>${renderPromptCell(r.prompt)}</td>
+        <td>${esc((r.context||'').slice(0,50))}${(r.context||'').length>50?'…':''}</td>
+        <td>${esc(r.version)}</td>
+        <td>
+          <button class="btn" onclick="editRow(${i})">✏️</button>
+          <button class="btn danger" onclick="deleteRow(${i})">🗑️</button>
+        </td>`;
+      tr.addEventListener('click',e=>{
+        if (!e.target.closest('button')) openDetail(r);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function apply() {
+    buildTable(dataset());
+    await saveData();
+  }
+
+  // Add/Edit/Delete
+  document.getElementById('addRowBtn').onclick = ()=>{
+    formTitle.textContent = 'Add Row';
+    editingIndex = null;
+    rowForm.reset();
+    formModalBg.style.display = 'block';
+  };
+  formModalClose.onclick   = ()=>formModalBg.style.display='none';
+  detailModalClose.onclick = ()=>detailModalBg.style.display='none';
+
+  rowForm.onsubmit = async e => {
+    e.preventDefault();
+    const row = {
+      serial: fSerial.value.trim(),
+      author: fAuthor.value.trim(),
+      functionality: fFunctionality.value,
+      prompt: fPrompt.value,
+      context: fContext.value,
+      version: fVersion.value.trim()
+    };
+    if (editingIndex!==null) dataset()[editingIndex] = row;
+    else dataset().push(row);
+    formModalBg.style.display='none';
+    await apply();
+  };
+
+  window.editRow = i => {
+    formTitle.textContent='Edit Row';
+    editingIndex = i;
+    const r = dataset()[i]||{};
+    fSerial.value        = r.serial||'';
+    fAuthor.value        = r.author||'';
+    fFunctionality.value = r.functionality||'';
+    fPrompt.value        = r.prompt||'';
+    fContext.value       = r.context||'';
+    fVersion.value       = r.version||'';
+    formModalBg.style.display='block';
+  };
+
+  window.deleteRow = async i => {
+    if (confirm('Delete row?')) {
+      dataset().splice(i,1);
+      await apply();
+    }
+  };
+
+  function openDetail(r){
+    let promptHTML = "";
+    if (r.prompt?.startsWith("http")) {
+      promptHTML = `<p><b>Prompt:</b> <a href="${esc(r.prompt)}" target="_blank">${esc(r.prompt)}</a></p>`;
+    } else {
+      promptHTML = `<p><b>Prompt:</b></p><div>${marked.parse(r.prompt||"")}</div>`;
+    }
+    detailContent.innerHTML = `
+      <p><b>Serial:</b> ${esc(r.serial)}</p>
+      <p><b>Author:</b> ${esc(r.author)}</p>
+      <p><b>Functionality:</b> ${esc(r.functionality)}</p>
+      ${promptHTML}
+      <p><b>Context:</b> ${esc(r.context)}</p>
+      <p><b>Version:</b> ${esc(r.version)}</p>`;
+    detailModalBg.style.display='block';
+  }
+
+  // import/export utility
+  function download(name,text){
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text],{type:'text/plain'}));
+    a.download = name; a.click();
+  }
+
+  // EXPORT JSON/CSV
+  if (exportJsonBtn) exportJsonBtn.onclick = ()=>download(`${viewSel.value}.json`, JSON.stringify(dataset(),null,2));
+  if (exportCsvBtn)  exportCsvBtn.onclick = ()=>{
+    const rows = dataset();
+    const hdr = ['Serial','Author','Functionality','Prompt','Context','Version'];
+    const csv = [ hdr.join(',') ];
+    rows.forEach(r=>{
+      const vals = [r.serial,r.author,r.functionality,r.prompt,r.context,r.version]
+        .map(v=>`"${String(v||'').replace(/"/g,'""').replace(/\r?\n/g,'\\n')}"`);
+      csv.push(vals.join(','));
+    });
+    download(`${viewSel.value}.csv`, csv.join('\n'));
+  };
+
+  // UPDATED IMPORT JSON: accepts either an array or a {tcg:[],dbg:[]} object
+  if (importJsonBtn) importJsonBtn.onclick = ()=>{
+    const inp = document.createElement('input');
+    inp.type='file'; inp.accept='application/json';
+    inp.onchange = async e=>{
+      const file = e.target.files[0];
+      const rdr = new FileReader();
+      rdr.onload = async ()=>{
+        try {
+          const data = JSON.parse(rdr.result);
+          // if array, merge into current view
+          if (Array.isArray(data)) {
+            DATASETS[viewSel.value].push(...data);
+          }
+          // if object with tcg/dbg keys, merge both
+          else if (data && typeof data==='object') {
+            if (Array.isArray(data.tcg)) DATASETS.tcg.push(...data.tcg);
+            if (Array.isArray(data.dbg)) DATASETS.dbg.push(...data.dbg);
+          }
+          else {
+            throw new Error("JSON must be an array or {tcg:[],dbg:[]} object");
+          }
+          await apply();
+        } catch(err) {
+          alert(err.message || "Import failed");
+        }
+      };
+      rdr.readAsText(file);
+    };
+    inp.click();
+  };
+
+  // IMPORT CSV/MD (unchanged)
+  if (importCsvBtn) importCsvBtn.onclick = ()=>{
+    const inp = document.createElement('input');
+    inp.type='file'; inp.accept='.csv';
+    inp.onchange = async e=>{
+      const file=e.target.files[0],r=new FileReader();
+      r.onload=async ()=>{
+        r.result.split(/\r?\n/).slice(1).forEach(line=>{
+          if(!line.trim())return;
+          const cols = parseCsvLine(line);
+          DATASETS[viewSel.value].push({
+            serial:cols[0],author:cols[1],functionality:cols[2],
+            prompt:cols[3],context:cols[4],version:cols[5]
+          });
+        });
+        await apply();
+      };
+      r.readAsText(file);
+    };
+    inp.click();
+  };
+  if (importMdBtn) importMdBtn.onclick = ()=>{
+    const inp = document.createElement('input');
+    inp.type='file'; inp.accept='.md';
+    inp.onchange = async e=>{
+      const file=e.target.files[0],r=new FileReader();
+      r.onload=async ()=>{
+        DATASETS[viewSel.value].push({
+          serial:String(Date.now()),author:'',functionality:'',prompt:r.result,context:'',version:''
+        });
+        await apply();
+      };
+      r.readAsText(file);
+    };
+    inp.click();
+  };
+
+  // CSV parser
+  function parseCsvLine(line) {
+    const out=[]; let cur='',q=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(q){
+        if(ch==='"'&&line[i+1]==='"'){cur+='"';i++;}
+        else if(ch==='"')q=false;
+        else cur+=ch;
+      } else {
+        if(ch===','){out.push(cur);cur='';}
+        else if(ch==='"')q=true;
+        else cur+=ch;
+      }
+    }
+    out.push(cur);
+    return out.map(s=>s.replace(/\\n/g,'\n'));
+  }
+
+  viewSel.onchange = apply;
+
+  // start
+  (async ()=>{
+    await loadData();
+    await apply();
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "tcg": [
+    {
+      "serial": "1",
+      "author": "Alice",
+      "functionality": "User Login",
+      "prompt": "Generate test cases for user login functionality covering valid and invalid credentials, empty fields, SQL injection attacks, and password recovery.",
+      "context": "Web application authentication module",
+      "version": "1.0"
+    },
+    {
+      "serial": "2",
+      "author": "Bob",
+      "functionality": "Shopping Cart",
+      "prompt": "Create test cases for shopping cart interactions including adding items, removing items, updating quantities, and calculating totals, including edge cases for discounts and out-of-stock items.",
+      "context": "E-commerce platform",
+      "version": "1.2"
+    }
+  ],
+  "dbg": [
+    {
+      "serial": "1",
+      "author": "Carol",
+      "functionality": "Database Connection",
+      "prompt": "Debug intermittent database connection timeouts and errors in the Node.js application, investigating network issues, connection-pool misconfiguration, and resource constraints.",
+      "context": "Node.js backend service",
+      "version": "2.0"
+    },
+    {
+      "serial": "2",
+      "author": "Dave",
+      "functionality": "API Response Parsing",
+      "prompt": "Diagnose why the React frontend is receiving malformed JSON from the API and failing to render components correctly, checking HTTP headers, JSON formatting, and error handling.",
+      "context": "React.js frontend",
+      "version": "1.5"
+    }
+  ]
+}
