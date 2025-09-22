@@ -16,7 +16,8 @@ This project helps organize, view, and manage reusable AI prompts in a clean web
 ---
 
 ## 🌐 Live Preview
-👉 [View on GitHub Pages](https://naradasumouli.github.io/Prompt-Library/)
+👉 [View on GitHub Pages]
+    (https://htmlpreview.github.io/?https://github.com/Naradasumouli/Prompt-Library/blob/main/index.html)
 
 *(If the link shows only code, enable GitHub Pages in your repo settings:  
 **Settings → Pages → Source → `main` branch → `/ (root)` → Save**.  
