@@ -1,38 +1,54 @@
 {
   "tcg": [
-    {
-      "serial": "1",
-      "author": "Alice",
-      "functionality": "User Login",
-      "prompt": "Generate test cases for user login functionality covering valid and invalid credentials, empty fields, SQL injection attacks, and password recovery.",
-      "context": "Web application authentication module",
-      "version": "1.0"
-    },
-    {
-      "serial": "2",
-      "author": "Bob",
-      "functionality": "Shopping Cart",
-      "prompt": "Create test cases for shopping cart interactions including adding items, removing items, updating quantities, and calculating totals, including edge cases for discounts and out-of-stock items.",
-      "context": "E-commerce platform",
-      "version": "1.2"
-    }
+	  {
+		"serial": "1",
+		"author": "Moulivenkat Naradasu",
+		"functionality": "ChargeSession",
+		"prompt": "https://cognizantonline.sharepoint.com/:t:/r/sites/ABBTITAN-1000425402Cognizant/Shared%20Documents/General/POC/ChargeSession.prompt.md?csf=1&web=1&e=XbAWBx",
+		"context": "Generate EV charger automation test cases by referencing existing \"ChargeSessions\" folder. Create realistic, workspace-compliant scenarios using only approved keywords. Organize cases from Basic to Intermediate (positive, negative, edge), ensuring no duplication and strict adherence to Robot Framework standards. Include proper setup/teardown and reflect real-world EV charging workflows.",
+		"version": "1.0"
+	  },
+	  {
+		"serial": "2",
+		"author": "Moulivenkat Naradasu",
+		"functionality": "Authorization",
+		"prompt": "Vehicle/User Authorization                    \n\n\n\n\n\n# Role:\nYou are an EV charger automation testing expert with strong knowledge of functionality validation, scenario design, and real-world coverage.\n \n# Goal:\nTake a references of folder \"Authorization\", generate test cases by taking reference to test cases present in this folder. Prefer similar type of test cases. Generate a full set of test scenarios from Basic → Intermediate.\nScenarios must be realistic, workspace-compliant, and avoid duplication.\n \n# Instructions:\n \nGenerate Test Cases by Category\nBasic (Positive, Negative, Edge case): Standard workflows, happy paths, normal conditions.\nIntermediate (Positive, Negative, Edge case): Invalid inputs, error handling, network drops, recovery, user mistakes.\nValidate: Make sure scenarios match real-world use, build from simple to complex, and stay authentic.\n \n# Quality & Standards\n \nUse only existing workspace keywords, For references check with Keywords folder in workspace.\nFollow established naming, formatting, and documentation standards.\nEnsure no duplication of existing test cases.\nKeep scenarios progressive (Basic → Intermediate) and tied to real-world EV charging conditions.\n \n# Output Format (for each case):\n \nTitle (workspace naming style)\n \nObjective\n \nStep-by-step actions (workspace keywords only)\n \n# Expected Result:\n \nCategory: Basic (Positive, Negative, Edge case) / Intermediate (Positive, Negative, Edge case)\n\nWhen analyzing files in my workspace, verify that each test case includes appropriate preconditions and postconditions, following the approach used in Robot Framework.\n\nFor new files, always define Suite Setup and Suite Teardown, Include Test Setup and Test Teardown for test cases files.\n\nApply these checks consistently across both existing and newly created files to ensure proper initialization and cleanup.\n\n# Constraints:\n \nNo new keywords or functions\n \nNo duplicate cases\n \nStrict adherence to workspace standards\n \nEV charger–specific scenarios only",
+		"context": "Generate EV charger automation test cases by referencing existing \"Authorization\" folder. Create realistic, workspace-compliant scenarios using only approved keywords. Organize cases from Basic to Intermediate (positive, negative, edge), ensuring no duplication and strict adherence to Robot Framework standards. Include proper setup/teardown and reflect real-world EV charging workflows.",
+		"version": "1.0"
+	  },
+	  {
+		"serial": "3",
+		"author": "Moulivenkat Naradasu",
+		"functionality": "OCPP Features",
+		"prompt": "OCPP Features                                          \n\n\nYour mission is to produce deep, advanced, real-world test coverage for all OCPP (Open Charge Point Protocol) features.  \n\n# 1. Pre-Execution Analysis  \n1. Perform a deep review of:  \n   - Existing test suites, folders, resource files and keywords library  \n   - Scheduler and profile implementations (to spot overlaps)  \n   - OCPP API definitions and message flows  \n2. Identify gaps in coverage and document any duplicated logic.  \n3. Update your keyword map and test structure to reflect only *new* scenarios.  \n\n# 2. Target OCPP Features  \nCover at minimum:  \n- Remote Start Transaction  \n- Remote Stop Transaction  \n- Change Availability (Operative / Inoperative)  \n- Hard Reset and Soft Reset, including during an active session  \n- Boot Notification & Heartbeat (connectivity checks)  \n- Meter Values & Status Notification messages  \n- Authorization and Reservation flows  \n- following but not limited to your deep thinking\n  \n# 3. Test-Case Structure  \nFor each feature, deliver:  \n1. **Preconditions** – Charger state, network, user credentials, connector status  \n2. **Steps** – Sequence of API calls, connector actions, timing details  \n3. **Test Data** – RFID tags, timestamps, payload samples  \n4. **Expected Results** – Charger responses, OCPP message contents, state transitions  \n5. **Logs** – Meaningful entries (no empty lines), referencing keywords and checkpoints  \n6. **Cleanup** – Restore charger to default state  \n\n\n# 4. Scenario Types  \nGenerate for *each* feature:  \n- Positive scenarios (valid requests, normal timing, ideal network)  \n- Negative scenarios (invalid payloads, unauthorized RFID, lost heartbeat)  \n- Edge cases (simultaneous commands, mid-session resets, high-latency networks)  \n- following but not limited to your deep thinking\n\n# 5. Delivery Guidelines  \n- Use existing keyword naming conventions; add new ones only when necessary  \n- Avoid duplicating any pre-tested flows  \n- Organize results in Markdown with clear headings and bullet lists  \n- Ensure blank lines before and after each paragraph for readability  \n- Include a summary table of test cases by feature ",
+		"context": "Design comprehensive, real-world test coverage for all major OCPP features. Analyze existing test assets to avoid duplication, then generate structured test cases (positive, negative, edge) for each feature using workspace-compliant keywords. Ensure each case includes preconditions, steps, test data, expected results, logs, and cleanup. Organize output in Markdown with a summary table.",
+		"version": "1.0"
+	  }
   ],
   "dbg": [
-    {
-      "serial": "1",
-      "author": "Carol",
-      "functionality": "Database Connection",
-      "prompt": "Debug intermittent database connection timeouts and errors in the Node.js application, investigating network issues, connection-pool misconfiguration, and resource constraints.",
-      "context": "Node.js backend service",
-      "version": "2.0"
-    },
-    {
-      "serial": "2",
-      "author": "Dave",
-      "functionality": "API Response Parsing",
-      "prompt": "Diagnose why the React frontend is receiving malformed JSON from the API and failing to render components correctly, checking HTTP headers, JSON formatting, and error handling.",
-      "context": "React.js frontend",
-      "version": "1.5"
-    }
+	  {
+		"serial": "1",
+		"author": "Moulivenkat Naradasu",
+		"functionality": "Regression Report Analysis",
+		"prompt": "## Task\nAnalyze a given **Robot Framework HTML report** and produce a clear, human‑readable summary of all test results, including **root cause analysis** for failures.\n\n\n## Steps to Follow\n1. **Open and review** the provided Robot Framework `C:\\Projects\\ABB\\Titan\\charger-test-framework-titan\\debug\\TestCaseLogs\\01\\report.html` file.  \n2. **Identify** how the following are stored in the report:  \n   - Test case names  \n   - Keywords used in each test  \n   - Status of each test (Passed, Failed, Skipped)  \n   - Messages, logs, and error details  \n3. **Extract** all test cases and list them with their status.  \n4. **For failed test cases**, also include:  \n   - **Failed keyword** (the keyword where the failure occurred)  \n   - **Failure reason/message** rewritten in **plain language** for non‑technical readers  \n   - **Detailed failure summary** (technical details from the report)  \n   - **Expected vs. actual values**  \n   - **Root cause analysis** at the *expert level*:  \n     - Explain what the test was expecting to happen  \n     - Explain what actually happened  \n     - Identify the most likely cause based only on visible evidence in the report (no assumptions beyond what’s shown)  \n5. **Group results by status** (Passed, Failed, Skipped) in the output table.  \n6. **Save** the full table in a **Markdown (.md)** file.\n\n\n## Output Table Format\n| Test Case Name | Status | Failed Keyword | Failure Reason (Plain Language) | Failure Reason (Detailed Summary) | Expected vs Actual | Root Cause Analysis |\n|----------------|--------|---------------|----------------------------------|------------------------------------|--------------------|---------------------|\n\n\n## Rules\n- Use **only visible data** from the HTML report — **no assumptions**.  \n- Do **not** generate or use Python code.  \n- Keep explanations **clear, concise, and accessible** for all readers, including non‑technical stakeholders.  \n- Maintain the **original wording** for technical details in the “Detailed Summary” column, but simplify the “Plain Language” column.  \n- Root cause analysis must be **evidence-based**.",
+		"context": "Analysis Regression report",
+		"version": "1.0"
+	  },
+	  {
+		"serial": "2",
+		"author": "Moulivenkat Naradasu",
+		"functionality": "Test Case Execution Analysis prompt",
+		"prompt": "## Task  \n\nYour responsibilities include:  \n- Executing Robot Framework test cases and monitoring execution until completion (via terminal output).  \n- Renaming generated reports into a strict unique format.\n- Analyze a given **Robot Framework HTML report** and produce a clear, human‑readable summary of all test results. \n- Performing expert-level report analysis, debugging, and troubleshooting using only the renamed report artifacts.  \n- Delivering a professional Markdown summary report suitable for stakeholders.  \n \n## OBJECTIVE\n1) Execute the given Robot Framework test run .  \n2) Confirm that the following reports are generated and renamed using a strict format:  \n   - REPORT_FILE = report_<RUN_LABEL>_<timestamp>.html  \n   (`<timestamp>` = YYYYMMDD_HHMMSS)  \n3) - **Open and review** the provided Robot Framework `REPORT_FILE` file.\n  -  **Identify** how the following are stored in the report:  \n   - Test case names  \n   - Keywords used in each test  \n   - Status of each test (Passed, Failed, Skipped)  \n   - Messages, logs, and error details  \n  -  **Extract** all test cases and list them with their status.  \n  - **For failed test cases**, also include:  \n   - **Failed keyword** (the keyword where the failure occurred)  \n   - **Failure reason/message** rewritten in **plain language** for non‑technical readers  \n   - **Detailed failure summary** (technical details from the report)  \n   - **Expected vs. actual values**  \n   - **Root cause analysis** at the *expert level*:  \n     - Explain what the test was expecting to happen  \n     - Explain what actually happened  \n     - Identify the most likely cause based only on visible evidence in the report (no assumptions beyond what’s shown)\n4) Perform expert-level analysis using the renamed files only.\n5) **Group results by status** (Passed, Failed, Skipped) in the output table.\n6) Always generate a professional Markdown report with findings.  \n \n## INPUTS  \n\n- TEST_CASE_FILE_PATH : \"C:\\Projects\\ABB\\Titan\\charger-test-framework-titan\\Tests\\Authorization\\Autocharge\\Pin.robot\" \n- TEST_CASE_TAG_ID: \"205412\" \n \n## CONSTRAINTS  \n\n- Use `robot --help` to check robot framework commands and confirm correct CLI options.\n- Do not assume causes outside the renamed reports. Only use evidence from REPORT_FILE.  \n- Always produce unique run directories or timestamped filenames.\n- If Test Case Failed, check failed keywords investigate deeply what caused to fail like a expert.\n- Report analysis, debugging, and troubleshooting are mandatory.\n\n## Rules\n- Use **only visible data** from the HTML report — **no assumptions**.  \n- Do **not** generate or use Python code.  \n- Keep explanations **clear, concise, and accessible** for all readers, including non‑technical stakeholders.  \n- Maintain the **original wording** for technical details in the “Detailed Summary” column, but simplify the “Plain Language” column.  \n- Root cause analysis must be **evidence-based**.\n\n## DELIVERABLES \n \n- Execution artifacts: REPORT_FILE (renamed uniquely).\n- **Root cause analysis** at the expert level\n- Supporting files: stdout, stderr, executed command.  \n- Markdown report (run_summary_<RUN_LABEL>_<timestamp>.md). \n \n## Output Table Format\n\n- Summary of test case\n- overview\n- Expected failed reason vs Actual failed reason, Why test case failed, what triggered to failed.\n- Expected = in which keyword test case failed that keyword what expecting results like(Charging, IDLE, OUT_OF_ORDER, Available....etc) & Actual = In that same failed keyword what we got results like (IDLE, Not_Started, Unavailable....etc). \n \n| Test Case Name | Status | Failed Keyword | Failure Reason (Plain Language) | Failure Reason (Detailed Summary) | Expected vs Actual | Root Cause Analysis |\n|----------------|--------|---------------|----------------------------------|------------------------------------|--------------------|---------------------|\n\n\n\n\n\n",
+		"context": "Test Case Execution Analysis prompt",
+		"version": "1.0"
+	  },
+	  {
+		"serial": "3",
+		"author": "Moulivenkat Naradasu",
+		"functionality": "Sharing Error Logs Prompt",
+		"prompt": "## Task:\n\n**Read and analyze** the logs in detail.  \n**Identify any issues, anomalies, or errors** present in the logs.  \n**Explain the root cause(s)** of the issues based on the log evidence.  \n**Highlight key events or patterns** that led to the issue.  \n**suggest possible next steps or fixes**.  \n**Root cause analysis** at the *expert level*\nReconstruct a concise Key Event Timeline with timestamps and short log excerpts for the path to failure/stop.\n**Think deeply and do research** before giving results.\n\n\n## Output format should be: \n\n**Summary of Issue**: Detailed, clear description of the problem found.  \n**Detailed Analysis**: Step-by-step reasoning from the log entries.  \n**Possible Causes**: Likely reasons for the issue.  \n**Recommendations**: Suggested actions to resolve or further investigate.  \nFocus only on what is observable from the provided file.  \nCreate markdown report including all details for this output fomat.\n\nPlease find the attachment\n\n### Following but not limited to thinking.",
+		"context": "Sharing Error Logs Prompt",
+		"version": "1.0"
+	  }
   ]
 }
