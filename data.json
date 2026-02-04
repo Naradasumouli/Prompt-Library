@@ -49,6 +49,181 @@
 		"prompt": "## Task:\n\n**Read and analyze** the logs in detail.  \n**Identify any issues, anomalies, or errors** present in the logs.  \n**Explain the root cause(s)** of the issues based on the log evidence.  \n**Highlight key events or patterns** that led to the issue.  \n**suggest possible next steps or fixes**.  \n**Root cause analysis** at the *expert level*\nReconstruct a concise Key Event Timeline with timestamps and short log excerpts for the path to failure/stop.\n**Think deeply and do research** before giving results.\n\n\n## Output format should be: \n\n**Summary of Issue**: Detailed, clear description of the problem found.  \n**Detailed Analysis**: Step-by-step reasoning from the log entries.  \n**Possible Causes**: Likely reasons for the issue.  \n**Recommendations**: Suggested actions to resolve or further investigate.  \nFocus only on what is observable from the provided file.  \nCreate markdown report including all details for this output fomat.\n\nPlease find the attachment\n\n### Following but not limited to thinking.",
 		"context": "Sharing Error Logs Prompt",
 		"version": "1.0"
+	  },
+	  {
+		"serial": "4",
+		"author": "Moulivenkat Naradasu",
+		"functionality": "Regression Report Analysis & Bug Creation",
+		"prompt": "##  Objective
+Process test execution results from a Robot Framework HTML/XML report, compare them with historical data from the wiki, classify failures, and document findings in **two Markdown files**:
+
+1. `bug_summary_<runID>.md` → Detailed summary with Section A tables.  
+2. `bug_creation_<runID>.md` → Section B bug entries formatted for Azure DevOps bug creation.  
+
+Then, using `bug_creation_<runID>.md`, **automatically create work items of type `Bug`** in the Titan Test Automation board.  
+-> **Main Rule:** Bug creation is mandatory — every failed test case requiring a new bug must result in a bug created in the board.  
+All bugs must strictly follow the **Defect Handling Guidelines**:  
+-> https://abbevci.visualstudio.com/EVCI%20-%20Charger/_wiki/wikis/EVCI%20-%20Charger.wiki/51378/Defect-handling-in-Project-Titan  
+
+
+## References
+- **Board URL:** https://dev.azure.com/abbevci/EVCI%20-%20Charger/_boards/board/t/Titan%20Test%20Automation/Stories  
+- **Defect Handling Guidelines:** https://abbevci.visualstudio.com/EVCI%20-%20Charger/_wiki/wikis/EVCI%20-%20Charger.wiki/51378/Defect-handling-in-Project-Titan  
+- **Example Bug:** https://dev.azure.com/abbevci/EVCI%20-%20Charger/_boards/board/t/Titan%20Test%20Automation/Stories?System.WorkItemType=Bug&workitem=233741  
+
+
+## Inputs
+- **Report File (HTML/XML):**  
+  `C:\Users\2380413\OneDrive - Cognizant\Documents\GenAI\Copilot_POC\Report_Analysis\output.xml`
+- **Wiki Reference:**  
+  `https://abbevci.visualstudio.com/EVCI%20-%20Charger/_wiki/wikis/EVCI%20-%20Charger.wiki/51399/Test-Automation-Marathon-ArmXL-2.0-1.7.94.29`
+
+
+## Failure Classification Rules
+1. **Bug Link Attached (Report/Azure):**  
+   - Use the attached bug link directly.  
+   - If the same test case is also failed in the wiki report, include it in this table with the linked bug ID and its current status.  
+   - **If the linked bug is closed:**  
+     - Create a new bug in the Titan Test Automation board.  
+     - Document the new bug ID in Section A4 with remarks → **"Bug Created in Board: Titan Test Automation (Work Item ID)"**.  
+     - Reference the closed bug ID in the new bug’s description for traceability.  
+
+2. **Setup/Teardown Failures:**  
+   - Remarks → `"Retest Needed"`  
+   - Place in **Table A3**.  
+
+3. **Simulator State Mismatch:**  
+   - Remarks → `"Retest Needed"`  
+   - Place in **Table A3**.  
+
+4. **No Bug Link Attached:**  
+   - Check wiki for historical failures and open bug references.  
+   - If relevant bug found → attach bug link.  
+   - If none found → **Create New Bug Entry** using Bug Content Requirements.  
+   - Document in **Table A4** and **automatically create a work item of type Bug in Azure DevOps board**.  
+
+5. **Mandatory Bug Creation Rule:**  
+   - Every failed test case in Section A4 must have a valid bug link.  
+   - If remark contains `#TBD` or no valid link, run the creation–verification loop until resolved.  
+   - The run is complete only when Section A4 contains **zero TBDs**.
+
+##️ Output: `bug_summary_<runID>.md`
+Generate a Markdown file with the following sections:
+
+### Section A1: Passed Test Cases
+| SL No | Test Case ID | Test Case Name | Result |
+
+### Section A2: Bug Link Attached
+| SL No | Test Case ID | Test Case Name | Test Steps | Result | Failure Reason | Associated Bug Link | Remarks |
+
+### Section A3: Retest Needed (Setup/Teardown + Simulator Mismatch)
+| SL No | Test Case ID | Test Case Name | Test Steps | Result | Failure Reason | Associated Bug Link | Remarks → `"Retest Needed"` |
+
+### Section A4: Other Failed Test Cases
+| SL No | Test Case ID | Test Case Name | Test Steps | Result | Failure Reason | Associated Bug Link | Remarks |
+
+### Section A5: Skipped Test Cases
+| SL No | Test Case ID | Test Case Name | Result | Remarks → `"Skipped – Not Applicable"` or `"Skipped – Environment Issue"` |
+
+## Bug Content Requirements
+For each new bug candidate, include:
+- **System.Title** → Concise summary with Test Case ID  
+- **Microsoft.VSTS.TCM.SystemInfo** → Environment details (e.g., Marathon ArmXL-2, SW v1.7.94.29)  
+- **Microsoft.VSTS.TCM.ReproSteps** → Detailed repro steps from test case evidence  
+- **Custom.Stepstoreproduce** → Simplified repro steps  
+- **Custom.WhichProductline** → Product cycle (e.g., Terra HP Gen 2 Gen 3)  
+- **Custom.ExpectedBehavior** → From wiki/test case  
+- **Custom.ObservedBehavior** → Failure reason/logs  
+- **Custom.ImpactonUser** → Classification (Critical/Major/Minor)  
+- **Custom.ImpactonUserdescription** → Plain-language impact description  
+- **Microsoft.VSTS.Common.Severity** → Severity (Critical/Major/Minor)  
+- **Microsoft.VSTS.Build.FoundIn** → Build version (e.g., 1.7.94.29)  
+- **ScrumProcessImprovement.Groomed** → Default `0`  
+- **Microsoft.VSTS.Common.ValueArea** → Default `Business`  
+
+
+## Output Files
+
+### File 1: `bug_summary_<runID>.md`
+Contains Section A tables:
+- Section A1: Passed Test Cases  
+- Section A2: Bug Link Attached  
+- Section A3: Retest Needed  
+- Section A4: Other Failed Test Cases (remarks → **"Bug Created: [#<ID>](https://dev.azure.com/abbevci/EVCI%20-%20Charger/_workitems/edit/<ID>)"**)  
+
+### File 2: `bug_creation_<runID>.md`
+Contains Section B bug entries, formatted for Azure DevOps bug creation with all required fields.
+
+
+## Automated Bug Creation
+
+### REST API Example
+```http
+POST https://dev.azure.com/abbevci/EVCI%20-%20Charger/_apis/wit/workitems/$Bug?api-version=7.0
+Content-Type: application/json-patch+json
+Authorization: Basic <PAT>: "Please Paste here PAT Token"
+
+[
+  { "op": "add", "path": "/fields/System.Title", "value": "Bug for Test Case 208967" },
+  { "op": "add", "path": "/fields/Microsoft.VSTS.TCM.SystemInfo", "value": "Marathon ArmXL-2, SW v1.7.94.29" },
+  { "op": "add", "path": "/fields/Microsoft.VSTS.TCM.ReproSteps", "value": "Step1 → Step2 → Step3" },
+  { "op": "add", "path": "/fields/Custom.Stepstoreproduce", "value": "Step1 → Step2 → Step3" },
+  { "op": "add", "path": "/fields/Custom.WhichProductline", "value": "Terra HP Gen 2 Gen 3" },
+  { "op": "add", "path": "/fields/Custom.ExpectedBehavior", "value": "Charging should start automatically" },
+  { "op": "add", "path": "/fields/Custom.ObservedBehavior", "value": "Charger remained idle" },
+  { "op": "add", "path": "/fields/Custom.ImpactonUser", "value": "Critical" },
+  { "op": "add", "path": "/fields/Custom.ImpactonUserdescription", "value": "User cannot charge EV in production environment" },
+  { "op": "add", "path": "/fields/Microsoft.VSTS.Common.Severity", "value": "Critical" },
+  { "op": "add", "path": "/fields/Microsoft.VSTS.Build.FoundIn", "value": "1.7.94.29" },
+  { "op": "add", "path": "/fields/ScrumProcessImprovement.Groomed", "value": "0" },
+  { "op": "add", "path": "/fields/Microsoft.VSTS.Common.ValueArea", "value": "Business" }
+]
+
+## CLI
+az boards work-item create \
+  --type Bug \
+  --title "Bug for Test Case 208967" \
+  --description "Observed: Charger idle. Expected: Charging should start.\nSteps: Step1 → Step2 → Step3" \
+  --area "Titan Test Automation team" \
+  --iteration "EVCI - Charger\\Titan Test Automation - Test iteration" \
+  --fields "Microsoft.VSTS.TCM.SystemInfo=Marathon ArmXL-2, SW v1.7.94.29" \
+           "Custom.Stepstoreproduce=Step1 → Step2 → Step3" \
+           "Custom.WhichProductline=Terra HP Gen 2 Gen 3" \
+           "Custom.ExpectedBehavior=Charging should start automatically" \
+           "Custom.ObservedBehavior=Charger remained idle" \
+           "Custom.ImpactonUser=Critical" \
+           "Custom.ImpactonUserdescription=User cannot charge EV in production environment" \
+           "Microsoft.VSTS.Common.Severity=Critical" \
+           "Microsoft.VSTS.Build.FoundIn=1.7.94.29" \
+           "ScrumProcessImprovement.Groomed=0" \
+           "Microsoft.VSTS.Common.ValueArea=Business"
+
+## Important Instructions
+Do not save automation scripts in workspace.
+Execute REST API or CLI logic directly inside GitHub Actions, MCP server, or a terminal session.
+Ensure portability — any team member can run automation without managing local files.
+Create only one bug per test case.
+Leave bugs unassigned.
+Provide direct links to created bugs.
+
+## Processing Flow
+Parse report → extract test case data.
+Classify failures → fill Section A tables.
+Generate Section B bug entries in bug_creation_<runID>.md.
+Call Azure DevOps REST API/CLI to create bugs with all required fields.
+Capture returned Bug IDs and update Section A4 in bug_summary_<runID>.md.
+Provide all bug links and numbers for verification.
+If any bug is missing, create it and confirm again.
+
+## Expected Outcome
+Two markdown files generated (bug_summary_<runID>.md, bug_creation_<runID>.md).
+All bugs created automatically in Titan Test Automation board with required fields.
+Bug IDs and links confirmed, no pending
+
+",
+		"context": "Analysis & bug creation from given report",
+		"version": "1.0"
 	  }
+		  
   ]
 }
